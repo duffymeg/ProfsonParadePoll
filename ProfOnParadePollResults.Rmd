@@ -1,0 +1,176 @@
+---
+title: "ProfsOnParadePollAnalysis"
+author: "Meghan Duffy"
+date: "1/27/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analysis of poll asking Dynamic Ecology readers about their experiences with "Professors on Parade"-style courses
+Poll appeared January 24, 2017 and closed on January 26, 2017
+Blog post url:
+https://dynamicecology.wordpress.com/2017/01/24/poll-have-you-been-involved-in-a-professors-on-parade-course-was-it-useful/
+
+The poll received 100 responses.
+
+###Q1: Were you involved in this course as a student or presenter?
+```
+1 = student
+2 = presenter
+```
+
+###Q2: What type of department or program was the course in? (Choose the option that is most similar to the target audience for the course)
+```
+1 = ecology and evolutionary biology
+2 = biology
+3 = molecular & cell biology
+4 = natural resources
+5 = other
+```
+
+###Q3: Who were the students in the course?
+```
+1 = just grad students
+2 = just undergrads
+3 = both grad students and undergrads
+```
+
+###Q4: Who were the presenters in the course?
+```
+1 = just faculty
+2 = faculty and grad students
+3 = faculty, grad students, and people outside academia
+```
+
+###Q5: What was the course content? (choose all that apply)
+```
+1 = research presentations
+2 = basic science skills (e.g., how to make a poster)
+3 = basic research skills (e.g., how to extract DNA)
+4 = career advice and prospects
+5 = introduction to a general research area (e.g., ecology)
+6 = discussion of papers written by department faculty
+7 = discussion of classic/important papers in the field
+```
+
+###Q6: Do you think the course was useful? (In other words: would most students think it was a good use of their time?)
+```
+1 = yes
+2 = no
+```
+
+Note: I did the above coding of the responses by hand in excel. Ideally, I'd check things one more time to make sure I didn't make an error (especially for Q5), but I'm trying not to allow this to take up a ton of time!
+
+## Results
+```{r, load libraries, message=FALSE, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r, read in data}
+polldata <- read.csv("PoPpollresults012617.csv", na.strings = "?")
+head(polldata)
+str(polldata)
+```
+
+```{r, quick look at whether faculty & students like the course differently}
+LikedSum <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(involved01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSum
+```
+
+```{r, quick look at effect of research presentation component}
+LikedSumResearch <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(researchpres01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumResearch
+```
+
+```{r, quick look at effect of presenters}
+LikedSumPresenter <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(whowerepresenters,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumPresenter
+
+LikedSumPresenter1 <- subset(LikedSumPresenter, useful01==1)
+
+ggplot(LikedSumPresenter1, aes(x=whowerepresenters, y=rel.freq)) +
+  geom_bar(stat='identity') +
+  ylab("Percent of respondents who found course useful")
+```
+
+```{r, quick look at effect of science skills coverage}
+LikedSumSciSkills <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(basicsciskills01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumSciSkills
+
+```
+
+```{r, quick look at effect of research technique coverage}
+LikedSumResSkills <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(basicresskills01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumResSkills
+
+```
+
+```{r, quick look at effect of career advice component}
+LikedSumCareerAdvice <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(careeradvice01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumCareerAdvice
+
+```
+
+```{r, quick look at effect of discussions of faculty papers}
+LikedSumFacPapers <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(paperdiscdeptfac01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumFacPapers
+
+```
+
+```{r, quick look at effect of discussions of faculty papers}
+LikedSumClassicPapers <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(paperdiscclassics01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumClassicPapers
+
+```
