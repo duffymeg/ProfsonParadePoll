@@ -174,3 +174,15 @@ LikedSumClassicPapers <-
 LikedSumClassicPapers
 
 ```
+
+```{r, quick look for differences between undergrad and grad student courses}
+LikedSumStudents <- 
+  polldata %>%
+  filter(!is.na(useful01)) %>%
+  group_by(students01,useful01) %>%
+  summarise(n=n()) %>%
+  mutate(rel.freq = round(100 * n/sum(n), 0))
+
+LikedSumStudents
+
+```
