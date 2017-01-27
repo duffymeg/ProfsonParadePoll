@@ -163,7 +163,7 @@ LikedSumFacPapers
 
 ```
 
-```{r, quick look at effect of discussions of faculty papers}
+```{r, quick look at effect of discussions of classic/impt papers}
 LikedSumClassicPapers <- 
   polldata %>%
   filter(!is.na(useful01)) %>%
